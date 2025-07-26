@@ -20,3 +20,18 @@ jobs:
       with:
         push: true
         tags: chank616/project-demo:latest
+
+    - name: deploy via SSH
+      uses: appleboy/ssh-action@v1
+      with:
+        host: "${{ secrets.SSH_HOST }}"
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        port: 22
+        script: |
+          echo "start deploy..."
+          sudo docker pull chank616/project-demo:latest
+          sudo docker stop project-demo || true
+          sudo docker rm project-demo || true
+          sudo docker run -d --name project-demo -p 8000:8000 docker.1ms.run/chank616/project-demo:latest
+          echo "deploy over!"
